@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plantain Leaf Disease Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('leaf3.jpg'); /* Add your banana leaf background image here */
+            background-size: cover; /* Makes the background image cover the entire area */
+            background-position: center; /* Centers the image */
+            margin: 0;
+            padding: 0;
+            color: black; /* Change text color to improve visibility */
+            line-height: 1.6; /* Improve readability */
+        }
+
+        header {
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white for contrast */
+            color: black; /* Black text for better readability */
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        section {
+            margin: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque white */
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1, h2 {
+            color: black; /* Ensure headings are visible against background */
+        }
+
+        .upload-btn {
+            background-color: green; /* Use a color that contrasts well with white text */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .upload-btn:hover {
+            background-color: darkgreen; /* Darker green on hover */
+        }
+
+        input[type="file"] {
+            display: none; /* Hides the default file input */
+        }
+
+        label {
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .result {
+            margin-top: 20px;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 600px) {
+            header {
+                padding: 15px 0;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            h2 {
+                font-size: 20px;
+            }
+            .upload-btn {
+                width: 100%;
+                font-size: 18px;
+                padding: 12px;
+            }
+            section {
+                margin: 10px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Plantain Leaf Disease Detection</h1>
+    </header>
+
+    <section class="description">
+        <h2>About the Project</h2>
+        <p>This project utilizes machine learning algorithms to detect diseases affecting plantain leaves based on uploaded images. The objective is to assist farmers and agricultural specialists in identifying potential issues early, thereby improving crop yield and quality.</p>
+        <p>Once an image is uploaded, the system analyzes the leaf condition and provides a diagnosis along with detailed descriptions of any identified diseases. This tool is designed to be user-friendly, making it accessible for individuals without a technical background.</p>
+    </section>
+
+    <section class="upload-section">
+        <h2>Upload Plantain Leaf Image</h2>
+        <form id="upload-form">
+            <label for="file-upload" class="upload-btn">Upload Image</label>
+            <input type="file" id="file-upload" accept="image/*">
+        </form>
+    </section>
+
+    <section class="result-section" id="result-section" style="display:none;">
+        <h2>Disease Description</h2>
+        <div class="result">
+            <p id="disease-description">No image uploaded yet.</p>
+        </div>
+    </section>
+
+    <script>
+        const fileInput = document.getElementById('file-upload');
+        const resultSection = document.getElementById('result-section');
+        const diseaseDescription = document.getElementById('disease-description');
+
+        // Sample disease descriptions
+        const diseaseInfo = {
+            "Sigatoka": {
+                description: "Sigatoka is a fungal disease that affects banana plants. It causes streaks on leaves and reduces yield.",
+                symptoms: "Yellowing and streaks on leaves, premature leaf death.",
+                prevention: "Regularly inspect plants, remove infected leaves, and apply fungicides."
+            },
+            "Black Sigatoka": {
+                description: "A more severe form of Sigatoka that can devastate banana crops.",
+                symptoms: "Dark streaks on leaves, leading to leaf death.",
+                prevention: "Use resistant varieties and maintain good agricultural practices."
+            },
+            "Panama Disease": {
+                description: "A soil-borne fungal disease that affects the vascular system of banana plants.",
+                symptoms: "Wilting of leaves, yellowing, and plant collapse.",
+                prevention: "Rotate crops and avoid planting bananas in infected soil."
+            },
+            "Fusarium Wilt": {
+                description: "Fusarium wilt is caused by the fungus Fusarium oxysporum, leading to wilting and yellowing of leaves.",
+                symptoms: "Leaves wilt, turn yellow, and may collapse.",
+                prevention: "Use resistant varieties and practice good sanitation in the field."
+            },
+            "Leaf Spot": {
+                description: "Leaf spot diseases are caused by various pathogens and result in spots or lesions on leaves.",
+                symptoms: "Brown spots or lesions on leaves, often leading to leaf drop.",
+                prevention: "Maintain good air circulation, avoid overhead watering, and apply appropriate fungicides."
+            },
+            "Moko Disease": {
+                description: "Moko disease is caused by the bacterium Ralstonia solanacearum and affects the vascular system of plants.",
+                symptoms: "Wilting, yellowing, and blackening of leaf margins.",
+                prevention: "Practice crop rotation and avoid planting in contaminated soil."
+            },
+            "Bacterial Blight": {
+                description: "Bacterial blight is caused by the bacterium Xanthomonas campestris and leads to leaf wilting and dieback.",
+                symptoms: "Water-soaked lesions on leaves, leading to wilting and dieback.",
+                prevention: "Use resistant varieties and practice crop rotation."
+            },
+            "Bract Mosaic Virus": {
+                description: "Bract Mosaic Virus is a viral infection that causes mottled leaves and reduced yield.",
+                symptoms: "Mottled or streaked appearance on leaves, stunted growth.",
+                prevention: "Control aphid populations, use virus-free planting materials."
+            },
+            "Insect Pest": {
+                description: "Insect pests can cause significant damage to banana plants by feeding on leaves.",
+                symptoms: "Visible insects on plants, leaf damage, and yellowing.",
+                prevention: "Monitor for pests regularly and apply appropriate insecticides."
+            },
+            "Yellow Sigatoka": {
+                description: "Yellow Sigatoka is another form of leaf disease characterized by yellow spots.",
+                symptoms: "Yellow streaks and spots on leaves, affecting photosynthesis.",
+                prevention: "Use resistant varieties and maintain proper plant care."
+            }
+        };
+
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length > 0) {
+                const fileName = fileInput.files[0].name;
+                resultSection.style.display = 'block';
+                diseaseDescription.innerHTML = 'Analyzing the image...';
+
+                // Simulate analysis result
+                setTimeout(() => {
+                    const diseases = Object.keys(diseaseInfo); // Get list of diseases
+                    const detectedDisease = diseases[Math.floor(Math.random() * diseases.length)]; // Randomly select a disease
+                    const info = diseaseInfo[detectedDisease];
+                    diseaseDescription.innerHTML = `
+                        <strong>Disease Detected:</strong> ${detectedDisease}<br>
+                        <strong>Description:</strong> ${info.description}<br>
+                        <strong>Symptoms:</strong> ${info.symptoms}<br>
+                        <strong>Prevention:</strong> ${info.prevention}
+                    `;
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>
